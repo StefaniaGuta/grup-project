@@ -1,14 +1,23 @@
 import axios from "axios";
 
 const fiveDaysContainer = document.querySelector('.fivedayscontainer');
-const showFiveDaysWeather = document.querySelector('.fivedays-button');
-const weatherChart = document.querySelector('.weather-container');
-const cityName = document.getElementById('city-name');
-const countryName = document.getElementById('country-name');
-const form = document.querySelector('.form');
+const weatherChart = document.querySelector('.weather-fivedays-container');
+const cityName = document.getElementById('city-fivedays-name');
+const countryName = document.getElementById('country-fivedays-name');
 const leftBtn = document.querySelector('.left-btn');
 const rightBtn = document.querySelector('.right-btn');
+
+// de sters, le-am facut eu ca sa pot lucra
 const inputText = document.getElementsByName("searchQuery")[0];
+const form = document.querySelector('.form');
+const showFiveDaysWeather = document.querySelector('.fivedays-button');
+
+form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    await fetchWeather();
+});
+//
+
 
 fiveDaysContainer.style.opacity = '0';
 
@@ -16,11 +25,6 @@ showFiveDaysWeather.addEventListener("click", e =>{
     fiveDaysContainer.style.opacity = '100%';
 });
 
-form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    clearChart();
-    await fetchWeather();
-});
 
 const fetchWeather = async () =>{
     const apiKey = '6c59b7271a472d858ef65bf9fc510832';
@@ -33,7 +37,6 @@ const fetchWeather = async () =>{
         weatherPerDays(city.list);
         cityName.textContent = city.city.name;
         countryName.textContent = city.city.country;
-        
     }
     catch(error){
         console.log(error)
@@ -47,33 +50,16 @@ function weatherPerDays(weatherData) {
     const currtentMonth = months[new Date(weatherData[0].dt_txt).getMonth()];
     const filteredWeatherData = [];
 
-    let currentDate = '';
-    let dailyWeatherData = [];
-
-    weatherData.forEach((data) => {
-        const date = new Date(data.dt_txt).getDate();
-    
-        if (date !== currentDate) {
-            if (dailyWeatherData.length > 0) {
-                filteredWeatherData.push(dailyWeatherData[0]);
-            }
-            dailyWeatherData = [];
-            currentDate = date;
-        }
-    
-        dailyWeatherData.push(data);
-    });
-    
-    // Adăugăm ultima înregistrare a zilei în lista filtrată
-    if (dailyWeatherData.length > 0) {
-        filteredWeatherData.push(dailyWeatherData[0]);
-    }
+    for (let i = 0; i < weatherData.length; i += 8) {
+        filteredWeatherData.push(weatherData[i]);
+        console.log(weatherData[i]);
+    } 
 
     const weatherMarkup = filteredWeatherData.map((data) => `
-        <li class="weather-card">
+        <li class="weatherfivedays-card">
             <h2 class="day">${days[new Date(data.dt_txt).getDay()]}</h2>
             <h2 class="date">${new Date(data.dt_txt).getDate() + ' ' + currtentMonth}</h2>
-            <img src="http://openweathermap.org/img/wn/${data.weather[0].icon}.png"
+            <img src="http://openweathermap.org/img/w/${data.weather[0].icon}.png"
                 alt="weather icon" class="fivedays-icon">
             <div class="min-max-temp">
                 <div class="temp-min">
@@ -89,18 +75,37 @@ function weatherPerDays(weatherData) {
             <button class="more-info">more info</button>
         </li>
     `);
-
     weatherChart.innerHTML = weatherMarkup.join("");
 }
- 
-function clearChart() {
-    weatherChart.innerHTML = '';
-}
 
-leftBtn.addEventListener("click", () => {
-    weatherChart.style.transform += "translateX(90px)";
-})
+//butoane
 
-rightBtn.addEventListener("click", () => {
-    weatherChart.style.transform += "translateX(-90px)";
-});
+let transformStart = 0;
+let transOneMove = 90;
+let transMaxMove = 180;
+
+rightBtn.addEventListener("click", nexttransOneMoveFunction);
+leftBtn.addEventListener("click", prevtransOneMoveFunction);
+
+
+function nexttransOneMoveFunction(){
+    transformStart += transOneMove;
+    if(transformStart < transMaxMove ){
+        weatherChart.style.transform = `translatex(-${transformStart}px)`;
+        console.log(transformStart);
+        console.log(transMaxMove);
+    }else {
+        weatherChart.style.transform = `translatex(-${transMaxMove}px)`
+        rightBtn.style.disabled = true;
+    }return transformStart;
+   }
+
+function prevtransOneMoveFunction(){
+    console.log(transformStart)
+    transformStart -= transOneMove;
+    weatherChart.style.transform = `translatex(-${transformStart}px)`;
+    if(transformStart == 0 ){
+        leftBtn.style.disabled = true;
+    }
+       return transformStart}
+
