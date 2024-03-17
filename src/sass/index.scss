@@ -76,11 +76,11 @@ body {
   }
   
   .weather-container{
+    justify-content: space-around;
     display: flex;
     align-items: center;
-    justify-content: space-around;
     list-style-type: none;
-    padding: 0;
+    padding: 0 0 0 180px;
     margin: 0;
   }
   
@@ -98,17 +98,7 @@ body {
   .weather-card:focus {
     background-color: hsla(0, 0%, 100%, .12);
   }
-  
-  .weather-card:nth-child(4),
-  .weather-card:nth-child(5){
-    display: none;
-  }
-  
-  .weather-card:nth-child(4) .fivedays-icon,
-  .weather-card:nth-child(5) .fivedays-icon{
-    width: 70px;
-  }
-  
+
   
   .weather-card .day{
     font-family: Lato, sans-serif;
@@ -212,7 +202,7 @@ body {
       background-color: #102136;
       opacity: .8;
       box-shadow: 0 8px 43px 0 rgba(16,33,54,.59);
-      padding: 10px, 15px;
+      padding: 0;
       justify-content: space-evenly;
     }
   
@@ -224,14 +214,6 @@ body {
   
     .navigation-buttons{
       display: none;
-    }
-  
-    .weather-card:nth-child(4),
-    .weather-card:nth-child(5){
-      display: flex;
-      flex-direction: column;
-      margin-left: 0;
-      margin-inline: 10px;
     }
   
     .weather-card .day{
@@ -276,18 +258,9 @@ body {
       margin-inline: 0;
     }
   
-    .weather-card:nth-child(4),
-    .weather-card:nth-child(5){
-      margin-inline: 0;
-    }
-  
-    .weather-card:nth-child(4) .fivedays-icon,
-    .weather-card:nth-child(5) .fivedays-icon{
-    width: 100px;
-  }
-  
     .fivedays-icon{
       width: 100px;
+      color: #3498db;
     }
   
     .weather-card .min-max-temp .dash {

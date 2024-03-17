@@ -47,15 +47,33 @@ function weatherPerDays(weatherData) {
     const currtentMonth = months[new Date(weatherData[0].dt_txt).getMonth()];
     const filteredWeatherData = [];
 
-    for (let i = 0; i < weatherData.length; i += 8) {
-        filteredWeatherData.push(weatherData[i]);
-    }
+    let currentDate = '';
+    let dailyWeatherData = [];
+
+    weatherData.forEach((data) => {
+        const date = new Date(data.dt_txt).getDate();
     
+        if (date !== currentDate) {
+            if (dailyWeatherData.length > 0) {
+                filteredWeatherData.push(dailyWeatherData[0]);
+            }
+            dailyWeatherData = [];
+            currentDate = date;
+        }
+    
+        dailyWeatherData.push(data);
+    });
+    
+    // Adăugăm ultima înregistrare a zilei în lista filtrată
+    if (dailyWeatherData.length > 0) {
+        filteredWeatherData.push(dailyWeatherData[0]);
+    }
+
     const weatherMarkup = filteredWeatherData.map((data) => `
         <li class="weather-card">
             <h2 class="day">${days[new Date(data.dt_txt).getDay()]}</h2>
             <h2 class="date">${new Date(data.dt_txt).getDate() + ' ' + currtentMonth}</h2>
-            <img src="http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png"
+            <img src="http://openweathermap.org/img/wn/${data.weather[0].icon}.png"
                 alt="weather icon" class="fivedays-icon">
             <div class="min-max-temp">
                 <div class="temp-min">
@@ -78,3 +96,11 @@ function weatherPerDays(weatherData) {
 function clearChart() {
     weatherChart.innerHTML = '';
 }
+
+leftBtn.addEventListener("click", () => {
+    weatherChart.style.transform += "translateX(90px)";
+})
+
+rightBtn.addEventListener("click", () => {
+    weatherChart.style.transform += "translateX(-90px)";
+});
